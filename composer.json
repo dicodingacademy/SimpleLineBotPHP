@@ -1,0 +1,7 @@
+{
+    "require": {
+        "slim/slim": "^3.0",
+        "linecorp/line-bot-sdk": "^1.4",
+        "vlucas/phpdotenv": "^2.4"
+    }
+}
