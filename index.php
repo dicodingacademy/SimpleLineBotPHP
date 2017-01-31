@@ -24,8 +24,8 @@ $app->post('/', function ($request, $response)
 	$body 	   = file_get_contents('php://input');
 	$signature = $_SERVER['HTTP_X_LINE_SIGNATURE'];
 
-	error_log("Signature: " . $signature);
-	error_log("body: " . $body);
+	file_put_contents('php://stderr', "Signature: " . $signature);
+	file_put_contents('php://stderr', "body: " . $body);
 
 	// is LINE_SIGNATURE exists in request header?
 	if (empty($signature)){
@@ -42,13 +42,15 @@ $app->post('/', function ($request, $response)
 
 	$events = json_decode($body, true);
 
+	file_put_contents('php://stderr', 'Ready to fetch');
+
 	foreach ($events as $event)
 	{
-		error_log('Type: ' . $event['type']);
+		file_put_contents('php://stderr', 'Type: ' . $event['type']);
 
 		if ($event['type'] == 'message')
 		{
-			error_log('Message type: ' . $event['message']['type']);
+			file_put_contents('php://stderr', 'Message type: ' . $event['message']['type']);
 
 			if($event['message']['type'] == 'text')
 			{
