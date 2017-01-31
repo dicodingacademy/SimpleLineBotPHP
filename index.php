@@ -48,7 +48,10 @@ $app->post('/', function ($request, $response)
 		{
 			if($event['message']['type'] == 'text')
 			{
-				$result = $bot->replyText($event['replyToken'], $event['message']['text']);
+				$message = $event['message']['text'];
+				error_log($message);
+				$textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($message);
+				$result = $bot->replyMessage($event['replyToken'], $textMessageBuilder);
 				return $result->getHTTPStatus() . ' ' . $result->getRawBody();
 			}
 		}
