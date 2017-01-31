@@ -48,7 +48,7 @@ $app->post('/', function ($request, $response)
 		{
 			if($event['message']['type'] == 'text')
 			{
-				$result = $bot->replyText('U6e98397e2214e9681cfe2b3eaf95933a', $event['message']['text']);
+				$result = $bot->replyText($event['replyToken'], $event['message']['text']);
 				return $result->getHTTPStatus() . ' ' . $result->getRawBody();
 			}
 		}
