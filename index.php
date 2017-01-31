@@ -24,8 +24,8 @@ $app->post('/', function ($request, $response)
 	$body 	   = file_get_contents('php://input');
 	$signature = $_SERVER['HTTP_X_LINE_SIGNATURE'];
 
-	error_log(("Signature: ". $signature);
-	error_log(("body: ". $body);
+	error_log("Signature: " . $signature);
+	error_log("body: " . $body);
 
 	// is LINE_SIGNATURE exists in request header?
 	if (empty($signature)){
