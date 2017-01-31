@@ -33,7 +33,7 @@ $app->post('/', function ($request, $response)
 	}
 
 	// is this request comes from LINE?
-	if(SignatureValidator::validateSignature($body, $_ENV['CHANNEL_SECRET'], $signature)){
+	if(! SignatureValidator::validateSignature($body, $_ENV['CHANNEL_SECRET'], $signature)){
 		return $response->withStatus(400, 'Invalid signature');
 	}
 
