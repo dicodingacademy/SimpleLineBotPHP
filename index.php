@@ -26,7 +26,7 @@ $app->post('/', function ($request, $response)
 
 	// log body and signature
 	file_put_contents('php://stderr', 'Body: '.$body);
-	file_put_contents('php://stderr', 'Signature: '.$signature);
+	file_put_contents('php://stderr', 'Signature: '.$Signature);
 
 	// is LINE_SIGNATURE exists in request header?
 	if (empty($signature)){
@@ -34,7 +34,7 @@ $app->post('/', function ($request, $response)
 	}
 
 	// is this request comes from LINE?
-	if(! SignatureValidator::validateSignature($body, $_ENV['CHANNEL_SECRET'], $signature)){
+	if($_ENV['PASS_SIGNATURE'] == false && ! SignatureValidator::validateSignature($body, $_ENV['CHANNEL_SECRET'], $signature)){
 		return $response->withStatus(400, 'Invalid signature');
 	}
 
