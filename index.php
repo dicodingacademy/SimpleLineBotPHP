@@ -25,12 +25,16 @@ $app->post('/', function ($request, $response)
 	$signature = $_SERVER['HTTP_X_LINE_SIGNATURE'];
 
 	// is LINE_SIGNATURE exists in request header?
-	if (empty($signature))
+	if (empty($signature)){
+		error_log("coba broo");
 		return $response->withStatus(400, 'Signature not set');
+	}
 
 	// is this request comes from LINE?
-	if(SignatureValidator::validateSignature($body, $_ENV['CHANNEL_SECRET'], $signature))
+	if(SignatureValidator::validateSignature($body, $_ENV['CHANNEL_SECRET'], $signature)){
+		file_put_contents("php://stderr", $signature);
 		return $response->withStatus(400, 'Invalid signature');
+	}
 
 	$httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($_ENV['CHANNEL_ACCESS_TOKEN']);
 	$bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $_ENV['CHANNEL_SECRET']]);
