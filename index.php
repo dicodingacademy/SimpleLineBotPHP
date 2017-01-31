@@ -21,6 +21,7 @@ $app->get('/', function ($request, $response) {
 
 $app->post('/', function ($request, $response)
 {
+	// get request body and line signature header
 	$body 	   = file_get_contents('php://input');
 	$signature = $_SERVER['HTTP_X_LINE_SIGNATURE'];
 
@@ -37,21 +38,24 @@ $app->post('/', function ($request, $response)
 		return $response->withStatus(400, 'Invalid signature');
 	}
 
+	// init bot
 	$httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($_ENV['CHANNEL_ACCESS_TOKEN']);
 	$bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $_ENV['CHANNEL_SECRET']]);
 
-	$events = json_decode($body, true);
-
-	foreach ($events['events'] as $event)
+	$data = json_decode($body, true);
+	foreach ($data['events'] as $event)
 	{
 		if ($event['type'] == 'message')
 		{
 			if($event['message']['type'] == 'text')
 			{
-				// $result = $bot->replyText($event['replyToken'], $event['message']['text']);
+				// send same message as reply to user
+				$result = $bot->replyText($event['replyToken'], $event['message']['text']);
 
-				$textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($event['message']['text']);
-				$result = $bot->pushMessage($event['source']['userId'], $textMessageBuilder);
+				// or we can use pushMessage() instead to send reply message
+				// $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($event['message']['text']);
+				// $result = $bot->pushMessage($event['source']['userId'], $textMessageBuilder);
+				
 				return $result->getHTTPStatus() . ' ' . $result->getRawBody();
 			}
 		}
@@ -59,16 +63,16 @@ $app->post('/', function ($request, $response)
 
 });
 
-$app->get('/push/{to}/{message}', function ($request, $response, $args)
-{
-	$httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($_ENV['CHANNEL_ACCESS_TOKEN']);
-	$bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $_ENV['CHANNEL_SECRET']]);
+// $app->get('/push/{to}/{message}', function ($request, $response, $args)
+// {
+// 	$httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient($_ENV['CHANNEL_ACCESS_TOKEN']);
+// 	$bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $_ENV['CHANNEL_SECRET']]);
 
-	$textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($args['message']);
-	$result = $bot->pushMessage($args['to'], $textMessageBuilder);
+// 	$textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($args['message']);
+// 	$result = $bot->pushMessage($args['to'], $textMessageBuilder);
 
-	return $result->getHTTPStatus() . ' ' . $result->getRawBody();
-});
+// 	return $result->getHTTPStatus() . ' ' . $result->getRawBody();
+// });
 
 /* JUST RUN IT */
 $app->run();
