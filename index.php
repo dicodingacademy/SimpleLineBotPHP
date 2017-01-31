@@ -16,7 +16,7 @@ $app = new Slim\App($configs);
 
 /* ROUTES */
 $app->get('/', function ($request, $response) {
-	return $_ENV['CHANNEL_ACCESS_TOKEN'];
+	return "Lanjutkan!";
 });
 
 $app->post('/', function ($request, $response)
@@ -24,8 +24,9 @@ $app->post('/', function ($request, $response)
 	$body 	   = file_get_contents('php://input');
 	$signature = $_SERVER['HTTP_X_LINE_SIGNATURE'];
 
-	file_put_contents('php://stderr', "Signature: " . $signature);
-	file_put_contents('php://stderr', "body: " . $body);
+	// log body and signature
+	file_put_contents('php://stderr', 'Body: '.$body);
+	file_put_contents('php://stderr', 'Signature: '.$signature);
 
 	// is LINE_SIGNATURE exists in request header?
 	if (empty($signature)){
@@ -42,22 +43,13 @@ $app->post('/', function ($request, $response)
 
 	$events = json_decode($body, true);
 
-	file_put_contents('php://stderr', 'Ready to fetch');
-
 	foreach ($events['events'] as $event)
 	{
-		file_put_contents('php://stderr', 'Type: ' . $event['type']);
-
 		if ($event['type'] == 'message')
 		{
-			file_put_contents('php://stderr', 'Message type: ' . $event['message']['type']);
-
 			if($event['message']['type'] == 'text')
 			{
-				$message = $event['message']['text'];
-
-				$textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($message);
-				$result = $bot->replyMessage($event['replyToken'], $textMessageBuilder);
+				$result = $bot->replyText($event['replyToken'], $event['message']['text']);
 				return $result->getHTTPStatus() . ' ' . $result->getRawBody();
 			}
 		}
