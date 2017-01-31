@@ -24,15 +24,16 @@ $app->post('/', function ($request, $response)
 	$body 	   = file_get_contents('php://input');
 	$signature = $_SERVER['HTTP_X_LINE_SIGNATURE'];
 
+	error_log(("Signature: ". $signature);
+	error_log(("body: ". $body);
+
 	// is LINE_SIGNATURE exists in request header?
 	if (empty($signature)){
-		error_log("coba broo");
 		return $response->withStatus(400, 'Signature not set');
 	}
 
 	// is this request comes from LINE?
 	if(SignatureValidator::validateSignature($body, $_ENV['CHANNEL_SECRET'], $signature)){
-		file_put_contents("php://stderr", $signature);
 		return $response->withStatus(400, 'Invalid signature');
 	}
 
@@ -40,7 +41,6 @@ $app->post('/', function ($request, $response)
 	$bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $_ENV['CHANNEL_SECRET']]);
 
 	$events = json_decode($body, true);
-	file_put_contents("php://stderr", $body);
 
 	foreach ($events as $event)
 	{
@@ -49,7 +49,7 @@ $app->post('/', function ($request, $response)
 			if($event['message']['type'] == 'text')
 			{
 				$result = $bot->replyText('U6e98397e2214e9681cfe2b3eaf95933a', $event['message']['text']);
-				file_put_contents("php://stderr", $result->getHTTPStatus() . ' ' . $result->getRawBody());
+				return $result->getHTTPStatus() . ' ' . $result->getRawBody();
 			}
 		}
 	}
