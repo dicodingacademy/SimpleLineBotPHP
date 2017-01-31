@@ -44,7 +44,7 @@ $app->post('/', function ($request, $response)
 
 	file_put_contents('php://stderr', 'Ready to fetch');
 
-	foreach ($events as $event)
+	foreach ($events['events'] as $event)
 	{
 		file_put_contents('php://stderr', 'Type: ' . $event['type']);
 
