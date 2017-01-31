@@ -34,6 +34,7 @@ $app->post('/', function ($request, $response)
 	$bot = new \LINE\LINEBot($httpClient, ['channelSecret' => $_ENV['CHANNEL_SECRET']]);
 
 	$events = json_decode($body, true);
+	file_put_contents("php://stderr", $body);
 
 	foreach ($events as $event)
 	{
@@ -42,7 +43,7 @@ $app->post('/', function ($request, $response)
 			if($event['message']['type'] == 'text')
 			{
 				$result = $bot->replyText('U6e98397e2214e9681cfe2b3eaf95933a', $event['message']['text']);
-				return $result->getHTTPStatus() . ' ' . $result->getRawBody();
+				file_put_contents("php://stderr", $result->getHTTPStatus() . ' ' . $result->getRawBody());
 			}
 		}
 	}
