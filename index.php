@@ -14,7 +14,7 @@ $app = new Slim\App($configs);
 
 /* ROUTES */
 $app->get('/', function ($request, $response) {
-	return "hello world";
+	return $_ENV('CHANNEL_ACCESS_TOKEN');
 });
 
 $app->post('/', function ($request, $response)
