@@ -44,12 +44,16 @@ $app->post('/', function ($request, $response)
 
 	foreach ($events as $event)
 	{
+		error_log('Type: ' . $event['type']);
+
 		if ($event['type'] == 'message')
 		{
+			error_log('Message type: ' . $event['message']['type']);
+
 			if($event['message']['type'] == 'text')
 			{
 				$message = $event['message']['text'];
-				error_log($message);
+
 				$textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($message);
 				$result = $bot->replyMessage($event['replyToken'], $textMessageBuilder);
 				return $result->getHTTPStatus() . ' ' . $result->getRawBody();
